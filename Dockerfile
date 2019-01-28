@@ -1,22 +1,20 @@
 # base image
 FROM nginx
 
-# workdir
-WORKDIR /etc/nginx/conf.d/
-
 # copy config
-COPY config/ ./
+COPY config/ /etc/nginx/
 
-# get build args
-ARG domain
-ARG servname=reverse_proxy
-ARG listen_port=80
-ARG proxy_port=80
+# setup ENV
+ENV LISTEN_PORT=80 \
+    SERVER_NAME=reverse_proxy \
+    DOMAIN_PORT=80 \
+    DOMAIN=_
 
-# run args
-RUN sed -i -e "s/DOMAIN/$domain/g; \
-               s/SERVNAME/$servname/g; \
-               s/LISTEN_PORT/$listen_port/g; \
-               s/PROXY_PORT/$proxy_port/g;" \
-               reverse_proxy.conf
+# entry command
+CMD /bin/sh -c \
+    "envsubst < \
+     /etc/nginx/reverse_proxy.tmpl > \
+     /etc/nginx/conf.d/reverse_proxy.conf && \
+     nginx -g 'daemon off;' || \
+     cat /etc/nginx/conf.d/reverse_proxy.conf"
 
