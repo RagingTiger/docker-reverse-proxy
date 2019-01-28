@@ -1,10 +1,10 @@
 server {
-  listen LISTEN_PORT;
-  listen [::]:LISTEN_PORT;
+  listen ${LISTEN_PORT};
+  listen [::]:${LISTEN_PORT};
 
-  server_name SERVNAME;
+  server_name ${SERVNAME};
 
   location / {
-      proxy_pass http://DOMAIN:PROXY_PORT;
+      proxy_pass http://${DOMAIN}:${PROXY_PORT};
   }
 }
